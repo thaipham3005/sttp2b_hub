@@ -3,7 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>STTP2B Management Hub</title>
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -34,13 +34,8 @@
                 <div class="divider"></div>
                 <button id="themeToggleBtn" class="btn-icon" title="Toggle Theme"><i
                         class="fa-solid fa-moon"></i></button>
-                <button id="langToggleBtn" class="btn-icon" title="Toggle Language">EN</button>
                 <div class="divider"></div>
-                <label class="toggle-switch">
-                    <input type="checkbox" id="editModeToggle">
-                    <span class="slider round"></span>
-                </label>
-                <span class="toggle-label" data-i18n="editMode">Edit Mode</span>
+                <button id="editModeBtn" class="btn-icon" title="Toggle Edit Mode"><i class="fa-solid fa-lock"></i></button>
             </div>
         </header>
 
@@ -90,6 +85,23 @@
                     <button type="button" class="btn btn-secondary" onclick="closeModal('linkModal')"
                         data-i18n="cancel">Cancel</button>
                     <button type="submit" class="btn btn-primary" data-i18n="save">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="pinModal">
+        <div class="modal">
+            <h2 id="pinModalTitle" data-i18n="enterPin">Enter PIN</h2>
+            <form id="pinForm">
+                <div class="form-group">
+                    <label for="pinInput" data-i18n="pin">PIN</label>
+                    <input type="password" id="pinInput" required placeholder="******">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('pinModal')"
+                        data-i18n="cancel">Cancel</button>
+                    <button type="submit" class="btn btn-primary" data-i18n="unlock">Unlock</button>
                 </div>
             </form>
         </div>

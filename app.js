@@ -3,7 +3,7 @@ let appData = { categories: [] };
 
 // DOM Elements
 const mainContent = document.getElementById('mainContent');
-const editModeToggle = document.getElementById('editModeToggle');
+const editModeBtn = document.getElementById('editModeBtn');
 
 const categoryModal = document.getElementById('categoryModal');
 const categoryForm = document.getElementById('categoryForm');
@@ -21,8 +21,11 @@ const linkUrlInput = document.getElementById('linkUrl');
 const linkIconInput = document.getElementById('linkIcon');
 
 const themeToggleBtn = document.getElementById('themeToggleBtn');
-const langToggleBtn = document.getElementById('langToggleBtn');
 const layoutSelect = document.getElementById('layoutSelect');
+
+const pinModal = document.getElementById('pinModal');
+const pinForm = document.getElementById('pinForm');
+const pinInput = document.getElementById('pinInput');
 
 // State
 let currentTheme = localStorage.getItem('theme') || 'dark';
@@ -46,7 +49,11 @@ const i18n = {
         layoutList: "List",
         layoutGrid3: "3 per row",
         layoutGrid4: "4 per row",
-        layoutGrid8: "8 per row"
+        layoutGrid8: "8 per row",
+        enterPin: "Enter PIN",
+        pin: "PIN",
+        unlock: "Unlock",
+        incorrectPin: "Incorrect PIN!"
     },
     VN: {
         editMode: "Chế độ Sửa",
@@ -63,7 +70,11 @@ const i18n = {
         layoutList: "Danh sách",
         layoutGrid3: "3 mỗi hàng",
         layoutGrid4: "4 mỗi hàng",
-        layoutGrid8: "8 mỗi hàng"
+        layoutGrid8: "8 mỗi hàng",
+        enterPin: "Nhập mã PIN",
+        pin: "Mã PIN",
+        unlock: "Mở khóa",
+        incorrectPin: "Mã PIN không đúng!"
     }
 };
 
@@ -79,12 +90,41 @@ async function init() {
     await loadData();
     render();
     
-    // Edit mode toggle
-    editModeToggle.addEventListener('change', (e) => {
-        if (e.target.checked) {
-            document.body.classList.add('edit-mode');
-        } else {
+    // Edit mode button logic
+    editModeBtn.addEventListener('click', () => {
+        if (document.body.classList.contains('edit-mode')) {
+            // Lock it
             document.body.classList.remove('edit-mode');
+            editModeBtn.innerHTML = '<i class="fa-solid fa-lock"></i>';
+        } else {
+            // Prompt for PIN
+            pinInput.value = '';
+            openModal('pinModal');
+            setTimeout(() => pinInput.focus(), 100);
+        }
+    });
+
+    pinForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ action: 'verify_pin', pin: pinInput.value })
+            });
+            const result = await response.json();
+            if (result.success) {
+                document.body.classList.add('edit-mode');
+                editModeBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
+                closeModal('pinModal');
+            } else {
+                alert(i18n[currentLang].incorrectPin);
+                pinInput.value = '';
+                pinInput.focus();
+            }
+        } catch (err) {
+            console.error('Error verifying PIN:', err);
+            alert('Error verifying PIN');
         }
     });
 
@@ -93,14 +133,6 @@ async function init() {
         currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
         localStorage.setItem('theme', currentTheme);
         applyTheme(currentTheme);
-    });
-
-    // Language Toggle
-    langToggleBtn.addEventListener('click', () => {
-        currentLang = currentLang === 'EN' ? 'VN' : 'EN';
-        localStorage.setItem('lang', currentLang);
-        applyLang(currentLang);
-        render(); // Re-render dynamic content
     });
 
     // Layout Toggle
@@ -127,10 +159,9 @@ function applyTheme(theme) {
 }
 
 function applyLang(lang) {
-    langToggleBtn.textContent = lang;
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
-        if (i18n[lang][key]) {
+        if (i18n[lang] && i18n[lang][key]) {
             el.textContent = i18n[lang][key];
         }
     });

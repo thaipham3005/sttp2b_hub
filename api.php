@@ -10,6 +10,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 $dataFile = __DIR__ . '/data.json';
+$envFile = __DIR__ . '/.env';
+
+function getEditModePin() {
+    global $envFile;
+    if (file_exists($envFile)) {
+        $env = parse_ini_file($envFile);
+        if ($env && isset($env['EDIT_MODE_PIN'])) {
+            return (string)$env['EDIT_MODE_PIN'];
+        }
+    }
+    return "300587";
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     if (file_exists($dataFile)) {
@@ -25,6 +37,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $input = json_decode($inputJSON, true);
 
     if (json_last_error() === JSON_ERROR_NONE) {
+        if (isset($input['action']) && $input['action'] === 'verify_pin') {
+            $pin = isset($input['pin']) ? (string)$input['pin'] : '';
+            if ($pin === getEditModePin()) {
+                echo json_encode(["success" => true]);
+            } else {
+                echo json_encode(["success" => false]);
+            }
+            exit();
+        }
+
         // Basic validation - check if it has 'categories' array
         if (isset($input['categories']) && is_array($input['categories'])) {
             file_put_contents($dataFile, json_encode($input, JSON_PRETTY_PRINT));

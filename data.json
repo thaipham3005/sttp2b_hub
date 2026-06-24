@@ -1,6 +1,24 @@
 {
     "categories": [
         {
+            "id": "cat-1782273797445",
+            "name": "Project Statistics",
+            "links": [
+                {
+                    "id": "link-1782273952510",
+                    "title": "Project Progress PowerBI",
+                    "url": "https:\/\/app.powerbi.com\/view?r=eyJrIjoiN2IzNDNlN2YtZWEwOC00ZmEyLWFjZjctMGFmYzBjMzI3NzcwIiwidCI6ImM1ZjhiODM3LTA3NGQtNDE4NC05MmRjLTk4NGExZjJkMzNhOCIsImMiOjEwfQ%3D%3D",
+                    "icon": "https:\/\/thumbs.dreamstime.com\/b\/o-%C3%ADcone-crescente-do-gr%C3%A1fico-s%C3%ADmbolo-do-progresso-liso-78995622.jpg"
+                },
+                {
+                    "id": "link-1782274233056",
+                    "title": "Workfront PowerBI",
+                    "url": "https:\/\/app.powerbi.com\/view?r=eyJrIjoiMGE0OTgxYWItMTE5OS00NjlkLTg0YjctZTMwZWJhMmNlZmQzIiwidCI6ImM1ZjhiODM3LTA3NGQtNDE4NC05MmRjLTk4NGExZjJkMzNhOCIsImMiOjEwfQ%3D%3D",
+                    "icon": "https:\/\/static.vecteezy.com\/system\/resources\/previews\/040\/814\/543\/non_2x\/project-plan-icon-in-logotype-vector.jpg"
+                }
+            ]
+        },
+        {
             "id": "cat-1",
             "name": "Minutes of Meeting",
             "links": [
@@ -8,7 +26,7 @@
                     "id": "link-1",
                     "title": "EPCIC Weekly MOM",
                     "url": "https:\/\/ptschq-my.sharepoint.com\/:w:\/g\/personal\/thaipham_ptsc_com_vn\/IQCs34BZznzuTaRO2JP7IO0aARntmFsVUZNubTEjoPmS-lY?e=5GFs5Y",
-                    "icon": "https:\/\/t3.ftcdn.net\/jpg\/13\/08\/88\/98\/360_F_1308889892_ctcV9xsonKAVCS87Xntu9w0NI0YAznxN.jpg"
+                    "icon": "https:\/\/img.magnific.com\/premium-vector\/meeting-icon-showing-teamwork-with-people-sitting-around-conference-table-white_1077884-56372.jpg?semt=ais_hybrid&w=740&q=80"
                 },
                 {
                     "id": "link-2",
@@ -20,8 +38,51 @@
         },
         {
             "id": "cat-2",
-            "name": "Development",
-            "links": []
+            "name": "Procurement & Service",
+            "links": [
+                {
+                    "id": "link-1782273610147",
+                    "title": "Services Plan",
+                    "url": "https:\/\/ptscmcvn-my.sharepoint.com\/:x:\/g\/personal\/thaipham_ptscmc_vn\/IQBttEb0vB_ZTbtEHML7og0YAeycEtCOR8oRSagOn9RVjjU?rtime=2K_mD6XR3kg",
+                    "icon": "https:\/\/static.vecteezy.com\/system\/resources\/previews\/000\/350\/220\/non_2x\/vector-package-icon.jpg"
+                },
+                {
+                    "id": "link-1782273377574",
+                    "title": "Expediting Report",
+                    "url": "https:\/\/docs.google.com\/spreadsheets\/d\/1GuJ_mCxU9k04vmnjNUF4a-TANC6Opo8zxho6VPZw78g\/edit?gid=1711517661#gid=1711517661",
+                    "icon": "https:\/\/thumbs.dreamstime.com\/b\/icon-expedite-prompt-expedite-143325254.jpg"
+                },
+                {
+                    "id": "link-1782273775575",
+                    "title": "Materials Report",
+                    "url": "https:\/\/docs.google.com\/spreadsheets\/d\/1OnYptzYkvwsZP9lbw9r2ZfsPPxOX-51lHSxbhkYwZc0\/edit?gid=377262975#gid=377262975",
+                    "icon": "https:\/\/thumbs.dreamstime.com\/b\/black-line-icon-steel-stainless-pipe-costruction-industry-metal-material-black-line-icon-steel-metal-material-176103275.jpg"
+                }
+            ]
+        },
+        {
+            "id": "cat-1782276354925",
+            "name": "INTERFACE MANAGEMENT",
+            "links": [
+                {
+                    "id": "link-1782276615524",
+                    "title": "Risk Register",
+                    "url": "https:\/\/ptschq-my.sharepoint.com\/:x:\/g\/personal\/thaipham_ptsc_com_vn\/IQAxK2YlaIZMTo_Xfn7DqmaVAS2681QncjuMvxEllqTxZUU?e=nsFWiV",
+                    "icon": "https:\/\/img.magnific.com\/vector-premium\/icono-vector-gestion-riesgos-puede-utilizarse-conjunto-iconos-plan-accion_717774-120862.jpg"
+                },
+                {
+                    "id": "link-1782277391686",
+                    "title": "Interface Points",
+                    "url": "https:\/\/docs.google.com\/spreadsheets\/d\/1K8WAKUCWM1OROssBkHtuYIBprY8_-rDs\/edit?gid=2091379197#gid=2091379197",
+                    "icon": "https:\/\/img.freepik.com\/premium-vector\/chart-network-icon-set-social-media-connect-vector-symbol-business-cooperation-team-sign-global-community-icon-black-filled-outlined-style_268104-15201.jpg"
+                },
+                {
+                    "id": "link-1782277950100",
+                    "title": "Interface Matrix",
+                    "url": "https:\/\/ptschq-my.sharepoint.com\/:x:\/g\/personal\/thaipham_ptsc_com_vn\/IQDBat3KEkunTLwoU5utVHTEAZlthn0-hcY5AORGE_5EsVk?e=jd57Nf",
+                    "icon": "https:\/\/static.vecteezy.com\/system\/resources\/thumbnails\/016\/610\/178\/small\/database-server-excel-icon-element-of-data-for-mobile-concept-and-web-apps-illustration-thin-line-icon-for-website-design-and-development-icon-on-white-background-vector.jpg"
+                }
+            ]
         }
     ]
 }
