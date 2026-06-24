@@ -96,7 +96,10 @@ body {
     margin: 0 0.5rem;
 }
 
-/* Edit Mode */
+/* Edit Mode - hidden for public read-only */
+#editModeBtn {
+    display: none !important;
+}
 body.edit-mode #editModeBtn i {
     color: var(--danger-color);
 }

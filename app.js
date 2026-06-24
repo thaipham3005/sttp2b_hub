@@ -1,4 +1,4 @@
-const API_URL = 'api.php';
+const API_URL = 'data.json';
 let appData = { categories: [] };
 
 // DOM Elements
