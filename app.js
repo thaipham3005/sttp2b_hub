@@ -17,6 +17,7 @@ const linkModalTitle = document.getElementById('linkModalTitle');
 const linkCategoryIdInput = document.getElementById('linkCategoryId');
 const linkIdInput = document.getElementById('linkId');
 const linkTitleInput = document.getElementById('linkTitle');
+const linkDescInput = document.getElementById('linkDesc');
 const linkUrlInput = document.getElementById('linkUrl');
 const linkIconInput = document.getElementById('linkIcon');
 
@@ -28,7 +29,7 @@ const pinForm = document.getElementById('pinForm');
 const pinInput = document.getElementById('pinInput');
 
 // State
-let currentTheme = localStorage.getItem('theme') || 'dark';
+let currentTheme = localStorage.getItem('theme') || 'light';
 let currentLang = localStorage.getItem('lang') || 'EN';
 let currentLayout = localStorage.getItem('layout') || 'layout-grid-3';
 
@@ -41,6 +42,7 @@ const i18n = {
         cancel: "Cancel",
         save: "Save",
         addLink: "Add Link",
+        description: "Description",
         title: "Title",
         url: "URL",
         iconUrl: "Icon URL (optional)",
@@ -62,6 +64,7 @@ const i18n = {
         cancel: "Hủy",
         save: "Lưu",
         addLink: "Thêm Liên kết",
+        description: "Mô tả",
         title: "Tiêu đề",
         url: "Đường dẫn",
         iconUrl: "Đường dẫn Biểu tượng (tùy chọn)",
@@ -96,6 +99,7 @@ async function init() {
             // Lock it
             document.body.classList.remove('edit-mode');
             editModeBtn.innerHTML = '<i class="fa-solid fa-lock"></i>';
+            render();
         } else {
             // Prompt for PIN
             pinInput.value = '';
@@ -117,6 +121,7 @@ async function init() {
                 document.body.classList.add('edit-mode');
                 editModeBtn.innerHTML = '<i class="fa-solid fa-lock-open"></i>';
                 closeModal('pinModal');
+                render();
             } else {
                 alert(i18n[currentLang].incorrectPin);
                 pinInput.value = '';
@@ -199,10 +204,16 @@ async function saveData() {
 // Render
 function render() {
     mainContent.innerHTML = '';
+    const isEditMode = document.body.classList.contains('edit-mode');
     
     appData.categories.forEach((category, catIndex) => {
         const catEl = document.createElement('section');
         catEl.className = 'category';
+        if (isEditMode) {
+            catEl.draggable = true;
+            catEl.dataset.type = 'category';
+            catEl.dataset.catIndex = catIndex;
+        }
         
         // Category Header
         const headerEl = document.createElement('div');
@@ -215,8 +226,6 @@ function render() {
         const catActionsEl = document.createElement('div');
         catActionsEl.className = 'category-actions';
         catActionsEl.innerHTML = `
-            <button class="btn-icon" onclick="moveCategory(${catIndex}, -1)" title="Move Up"><i class="fa-solid fa-arrow-up"></i></button>
-            <button class="btn-icon" onclick="moveCategory(${catIndex}, 1)" title="Move Down"><i class="fa-solid fa-arrow-down"></i></button>
             <button class="btn-icon" onclick="openCategoryModal('${category.id}')" title="Edit Category"><i class="fa-solid fa-pen"></i></button>
             <button class="btn-icon danger" onclick="deleteCategory('${category.id}')" title="Delete Category"><i class="fa-solid fa-trash"></i></button>
         `;
@@ -228,6 +237,10 @@ function render() {
         // Tiles Grid
         const gridEl = document.createElement('div');
         gridEl.className = 'tiles-grid';
+        if (isEditMode) {
+            gridEl.dataset.dropZone = 'category';
+            gridEl.dataset.catId = category.id;
+        }
         
         if (category.links) {
             category.links.forEach((link, linkIndex) => {
@@ -237,12 +250,13 @@ function render() {
                 tileEl.target = '_blank';
                 tileEl.rel = 'noopener noreferrer';
                 
-                // Prevent default navigation if in edit mode
-                tileEl.addEventListener('click', (e) => {
-                    if (document.body.classList.contains('edit-mode')) {
-                        e.preventDefault();
-                    }
-                });
+                if (isEditMode) {
+                    tileEl.draggable = true;
+                    tileEl.dataset.type = 'link';
+                    tileEl.dataset.catId = category.id;
+                    tileEl.dataset.linkIndex = linkIndex;
+                    tileEl.addEventListener('click', (e) => e.preventDefault());
+                }
                 
                 const iconUrl = link.icon || 'https://via.placeholder.com/48/3b82f6/ffffff?text=' + link.title.charAt(0).toUpperCase();
                 
@@ -252,11 +266,9 @@ function render() {
                     </div>
                     <div class="tile-info">
                         <div class="tile-title">${escapeHTML(link.title)}</div>
-                        <div class="tile-url">${escapeHTML(link.url)}</div>
+                        ${link.description ? `<div class="tile-desc">${escapeHTML(link.description)}</div>` : `<div class="tile-url">${escapeHTML(link.url)}</div>`}
                     </div>
                     <div class="tile-actions" onclick="event.preventDefault();">
-                        <button class="btn-icon" onclick="moveLink('${category.id}', ${linkIndex}, -1)" title="Move Left"><i class="fa-solid fa-arrow-left"></i></button>
-                        <button class="btn-icon" onclick="moveLink('${category.id}', ${linkIndex}, 1)" title="Move Right"><i class="fa-solid fa-arrow-right"></i></button>
                         <button class="btn-icon" onclick="openLinkModal('${category.id}', '${link.id}')" title="Edit Link"><i class="fa-solid fa-pen"></i></button>
                         <button class="btn-icon danger" onclick="deleteLink('${category.id}', '${link.id}')" title="Delete Link"><i class="fa-solid fa-trash"></i></button>
                     </div>
@@ -284,6 +296,11 @@ function render() {
     addCatContainer.className = 'add-category-btn-container';
     addCatContainer.innerHTML = `<button class="add-category-btn" onclick="openCategoryModal()"><i class="fa-solid fa-plus"></i> ${i18n[currentLang].addCategory}</button>`;
     mainContent.appendChild(addCatContainer);
+    
+    // Initialize Drag and Drop Listeners if in Edit Mode
+    if (isEditMode) {
+        initDragAndDrop();
+    }
 }
 
 // Modal Logic
@@ -317,12 +334,14 @@ function openLinkModal(catId, linkId = null) {
         linkModalTitle.textContent = i18n[currentLang].editLink;
         linkIdInput.value = link.id;
         linkTitleInput.value = link.title;
+        linkDescInput.value = link.description || '';
         linkUrlInput.value = link.url;
         linkIconInput.value = link.icon || '';
     } else {
         linkModalTitle.textContent = i18n[currentLang].addLink;
         linkIdInput.value = '';
         linkTitleInput.value = '';
+        linkDescInput.value = '';
         linkUrlInput.value = '';
         linkIconInput.value = '';
     }
@@ -355,6 +374,7 @@ async function handleLinkSubmit(e) {
     const catId = linkCategoryIdInput.value;
     const linkId = linkIdInput.value;
     const title = linkTitleInput.value.trim();
+    const desc = linkDescInput.value.trim();
     const url = linkUrlInput.value.trim();
     const icon = linkIconInput.value.trim();
     
@@ -365,6 +385,7 @@ async function handleLinkSubmit(e) {
         const link = cat.links.find(l => l.id === linkId);
         if (link) {
             link.title = title;
+            link.description = desc;
             link.url = url;
             link.icon = icon;
         }
@@ -372,6 +393,7 @@ async function handleLinkSubmit(e) {
         cat.links.push({
             id: 'link-' + Date.now(),
             title: title,
+            description: desc,
             url: url,
             icon: icon
         });
@@ -400,34 +422,70 @@ async function deleteLink(catId, linkId) {
     }
 }
 
-// Arrangement
-async function moveCategory(index, direction) {
-    if (index + direction < 0 || index + direction >= appData.categories.length) return;
-    
-    const temp = appData.categories[index];
-    appData.categories[index] = appData.categories[index + direction];
-    appData.categories[index + direction] = temp;
-    
-    render();
-    await saveData();
-}
+// Drag and Drop Logic (using SortableJS)
+let sortableCategories = null;
+let sortableLinksList = [];
 
-async function moveLink(catId, linkIndex, direction) {
-    const cat = appData.categories.find(c => c.id === catId);
-    if (!cat) return;
+function initDragAndDrop() {
+    // Clean up existing instances if any
+    if (sortableCategories) sortableCategories.destroy();
+    sortableLinksList.forEach(s => s.destroy());
+    sortableLinksList = [];
     
-    if (linkIndex + direction < 0 || linkIndex + direction >= cat.links.length) return;
-    
-    const temp = cat.links[linkIndex];
-    cat.links[linkIndex] = cat.links[linkIndex + direction];
-    cat.links[linkIndex + direction] = temp;
-    
-    render();
-    await saveData();
+    // Sortable for Categories
+    sortableCategories = new Sortable(mainContent, {
+        animation: 150,
+        handle: '.category-header', // drag handle
+        draggable: '.category',
+        onEnd: async function (evt) {
+            const { oldIndex, newIndex } = evt;
+            if (oldIndex === newIndex) return;
+            const [movedCat] = appData.categories.splice(oldIndex, 1);
+            appData.categories.splice(newIndex, 0, movedCat);
+            render();
+            await saveData();
+        }
+    });
+
+    // Sortable for Links in each category
+    const grids = document.querySelectorAll('.tiles-grid');
+    grids.forEach(grid => {
+        const s = new Sortable(grid, {
+            group: 'shared', // set both lists to same group
+            animation: 150,
+            filter: '.add-tile-btn',
+            draggable: '.tile:not(.add-tile-btn)',
+            onEnd: async function (evt) {
+                const fromCatId = evt.from.dataset.catId;
+                const toCatId = evt.to.dataset.catId;
+                const oldIndex = evt.oldIndex;
+                let newIndex = evt.newIndex;
+                
+                if (!fromCatId || !toCatId) return;
+                
+                const fromCat = appData.categories.find(c => c.id === fromCatId);
+                const toCat = appData.categories.find(c => c.id === toCatId);
+                
+                if (fromCat && toCat) {
+                    if (newIndex > toCat.links.length) {
+                        newIndex = toCat.links.length;
+                    }
+                    if (fromCatId === toCatId && oldIndex === newIndex) return;
+                    
+                    const [movedLink] = fromCat.links.splice(oldIndex, 1);
+                    toCat.links.splice(newIndex, 0, movedLink);
+                    render();
+                    await saveData();
+                }
+            }
+        });
+        sortableLinksList.push(s);
+    });
 }
 
 // Utils
 function escapeHTML(str) {
+    if (!str) return '';
     const div = document.createElement('div');
     div.innerText = str;
     return div.innerHTML;
